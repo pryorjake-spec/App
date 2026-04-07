@@ -1,0 +1,47 @@
+{
+  "id": "russia",
+  "name": "Russia",
+  "city_name": "Moscow",
+  "hp": 20,
+  "defense_max": 20,
+  "infrastructure_max": 20,
+  "description": "A modern military power with layered defenses and powerful air assets. Their S-400 systems can intercept your aircraft cards.",
+  "escalation_turns": [3, 6, 10],
+  "attack_phases": [
+    {
+      "turn_range": [1, 2],
+      "label": "Border Skirmish",
+      "attacks": [
+        { "type": "damage_defense", "amount": 7 }
+      ]
+    },
+    {
+      "turn_range": [3, 5],
+      "label": "Armored Push",
+      "attacks": [
+        { "type": "damage_defense", "amount": 8 },
+        { "type": "damage_infrastructure", "amount": 5 }
+      ]
+    },
+    {
+      "turn_range": [6, 9],
+      "label": "Air Superiority",
+      "attacks": [
+        { "type": "damage_defense", "amount": 10 },
+        { "type": "damage_infrastructure", "amount": 6 },
+        { "type": "damage_hp", "amount": 1 }
+      ]
+    },
+    {
+      "turn_range": [10, 99],
+      "label": "Nuclear Threat",
+      "attacks": [
+        { "type": "damage_defense", "amount": 14 },
+        { "type": "damage_infrastructure", "amount": 8 },
+        { "type": "damage_hp", "amount": 2 }
+      ]
+    }
+  ],
+  "victory_text": "Moscow goes dark. The Kremlin is silent. Two down.",
+  "defeat_text": "Russian jets scramble. The saucer is forced back into orbit."
+}

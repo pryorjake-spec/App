@@ -1,0 +1,49 @@
+{
+  "id": "usa",
+  "name": "United States",
+  "city_name": "Washington D.C.",
+  "hp": 20,
+  "defense_max": 20,
+  "infrastructure_max": 20,
+  "description": "Earth's most advanced military. They start fully prepared and escalate to orbital strikes. Destroy them before they reach space.",
+  "escalation_turns": [2, 5, 8],
+  "attack_phases": [
+    {
+      "turn_range": [1, 1],
+      "label": "Rapid Response",
+      "attacks": [
+        { "type": "damage_defense", "amount": 8 },
+        { "type": "damage_infrastructure", "amount": 4 }
+      ]
+    },
+    {
+      "turn_range": [2, 4],
+      "label": "Combined Arms",
+      "attacks": [
+        { "type": "damage_defense", "amount": 10 },
+        { "type": "damage_infrastructure", "amount": 5 },
+        { "type": "damage_hp", "amount": 1 }
+      ]
+    },
+    {
+      "turn_range": [5, 7],
+      "label": "Carrier Strike Group",
+      "attacks": [
+        { "type": "damage_defense", "amount": 12 },
+        { "type": "damage_infrastructure", "amount": 6 },
+        { "type": "damage_hp", "amount": 2 }
+      ]
+    },
+    {
+      "turn_range": [8, 99],
+      "label": "ORBITAL STRIKE",
+      "attacks": [
+        { "type": "damage_defense", "amount": 16 },
+        { "type": "damage_infrastructure", "amount": 10 },
+        { "type": "damage_hp", "amount": 4 }
+      ]
+    }
+  ],
+  "victory_text": "The White House crumbles. Earth is yours. The invasion is complete.",
+  "defeat_text": "A satellite weapon charges. The saucer's hull splits. Earth survives... for now."
+}

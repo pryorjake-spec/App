@@ -1,0 +1,45 @@
+{
+  "id": "north_korea",
+  "name": "North Korea",
+  "city_name": "Pyongyang",
+  "hp": 20,
+  "defense_max": 20,
+  "infrastructure_max": 20,
+  "description": "A rigid military state with massive infantry numbers but limited technology. They cannot escalate beyond armored units.",
+  "escalation_turns": [4, 8, 12],
+  "attack_phases": [
+    {
+      "turn_range": [1, 3],
+      "label": "Infantry Wave",
+      "attacks": [
+        { "type": "damage_defense", "amount": 6 }
+      ]
+    },
+    {
+      "turn_range": [4, 7],
+      "label": "Artillery Barrage",
+      "attacks": [
+        { "type": "damage_defense", "amount": 6 },
+        { "type": "damage_infrastructure", "amount": 4 }
+      ]
+    },
+    {
+      "turn_range": [8, 11],
+      "label": "Tank Advance",
+      "attacks": [
+        { "type": "damage_defense", "amount": 10 },
+        { "type": "damage_infrastructure", "amount": 4 }
+      ]
+    },
+    {
+      "turn_range": [12, 99],
+      "label": "All-Out Assault",
+      "attacks": [
+        { "type": "damage_defense", "amount": 12 },
+        { "type": "damage_infrastructure", "amount": 6 }
+      ]
+    }
+  ],
+  "victory_text": "Pyongyang falls silent. The Great Leader's broadcasts go dark. One down.",
+  "defeat_text": "Their numbers were too great. The saucer retreats to regroup."
+}

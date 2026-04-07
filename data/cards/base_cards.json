@@ -1,0 +1,101 @@
+[
+  {
+    "id": "infantry",
+    "name": "Infantry",
+    "tier": "base",
+    "type": "attack",
+    "cost": 1,
+    "description": "Deploy infantry. Deals 5 damage to enemy defenses.",
+    "flavor": "The backbone of any invasion.",
+    "effects": [
+      { "type": "damage_defense", "target": "enemy", "amount": 5 }
+    ]
+  },
+  {
+    "id": "sappers",
+    "name": "Sappers",
+    "tier": "base",
+    "type": "attack",
+    "cost": 2,
+    "description": "Specialist demolitions unit. Deals 3 defense damage and 9 infrastructure damage.",
+    "flavor": "They don't fight fair. That's the point.",
+    "effects": [
+      { "type": "damage_defense", "target": "enemy", "amount": 3 },
+      { "type": "damage_infrastructure", "target": "enemy", "amount": 9 }
+    ]
+  },
+  {
+    "id": "mortarmen",
+    "name": "Mortarmen",
+    "tier": "base",
+    "type": "attack",
+    "cost": 2,
+    "description": "Long-range artillery. Deals 9 defense damage.",
+    "flavor": "Rains fire from beyond sight.",
+    "effects": [
+      { "type": "damage_defense", "target": "enemy", "amount": 9 }
+    ]
+  },
+  {
+    "id": "shield_wall",
+    "name": "Shield Wall",
+    "tier": "base",
+    "type": "defend",
+    "cost": 1,
+    "description": "Reinforce defenses. Gain 6 defense this turn.",
+    "flavor": "Hold the line.",
+    "effects": [
+      { "type": "heal_defense", "target": "player", "amount": 6 }
+    ]
+  },
+  {
+    "id": "fortify",
+    "name": "Fortify",
+    "tier": "base",
+    "type": "defend",
+    "cost": 2,
+    "description": "Construct barriers. Restore 5 infrastructure.",
+    "flavor": "Every wall rebuilt is one less gap to exploit.",
+    "effects": [
+      { "type": "heal_infrastructure", "target": "player", "amount": 5 }
+    ]
+  },
+  {
+    "id": "intel",
+    "name": "Intelligence Report",
+    "tier": "base",
+    "type": "skill",
+    "cost": 1,
+    "description": "Analyze enemy patterns. Draw 2 additional cards.",
+    "flavor": "Knowledge is the deadliest weapon.",
+    "effects": [
+      { "type": "draw_cards", "amount": 2 }
+    ]
+  },
+  {
+    "id": "abduct",
+    "name": "Abduction",
+    "tier": "base",
+    "type": "skill",
+    "cost": 2,
+    "description": "Abduct enemy infantry. Convert 4 enemy defense damage into shield for yourself.",
+    "flavor": "Their soldiers. Your problem solved.",
+    "effects": [
+      { "type": "damage_defense", "target": "enemy", "amount": 4 },
+      { "type": "heal_defense", "target": "player", "amount": 4 }
+    ]
+  },
+  {
+    "id": "beam_weapon",
+    "name": "Tractor Beam",
+    "tier": "base",
+    "type": "attack",
+    "cost": 1,
+    "description": "Fire saucer beam. Deals 4 defense damage and 4 infrastructure damage.",
+    "flavor": "We come in peace. We leave in pieces.",
+    "effects": [
+      { "type": "damage_defense", "target": "enemy", "amount": 4 },
+      { "type": "damage_infrastructure", "target": "enemy", "amount": 4 }
+    ]
+  }
+]
