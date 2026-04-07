@@ -98,11 +98,6 @@ func _build_layout() -> void:
 	top_inner.add_child(_phase_banner)
 
 	# ---- Middle area (cities + log) ----
-	var middle := HBoxContainer.new()
-	middle.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	middle.add_theme_constant_override("separation", 12)
-	root.add_child(middle)
-
 	var mid_margin := MarginContainer.new()
 	mid_margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	mid_margin.size_flags_vertical   = Control.SIZE_EXPAND_FILL
@@ -150,14 +145,12 @@ func _build_layout() -> void:
 	mid_inner.add_child(_enemy_panel)
 
 	# ---- Bottom: hand + end turn ----
-	var bottom_bg := ColorRect.new()
-	bottom_bg.custom_minimum_size = Vector2(0, 200)
-	bottom_bg.color = Color(0.06, 0.06, 0.10)
-	root.add_child(bottom_bg)
-
-	# We overlay the hand and button on bottom_bg using a container
 	var bottom_margin := MarginContainer.new()
 	bottom_margin.custom_minimum_size = Vector2(0, 200)
+	# Semi-transparent dark tint behind the hand area
+	var hand_bg_style := StyleBoxFlat.new()
+	hand_bg_style.bg_color = Color(0.04, 0.04, 0.08, 0.82)
+	bottom_margin.add_theme_stylebox_override("panel", hand_bg_style)
 	bottom_margin.add_theme_constant_override("margin_left",   16)
 	bottom_margin.add_theme_constant_override("margin_right",  16)
 	bottom_margin.add_theme_constant_override("margin_top",    10)
