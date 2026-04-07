@@ -4,9 +4,9 @@ extends HBoxContainer
 
 signal card_played(card_data: Dictionary)
 
-const CardScene := preload("res://scripts/Card.gd")
+const CardClass = preload("res://scripts/Card.gd")
 
-var _card_nodes: Array[PanelContainer] = []
+var _card_nodes: Array = []
 
 func _ready() -> void:
 	alignment = BoxContainer.ALIGNMENT_CENTER
@@ -30,8 +30,7 @@ func refresh_playability() -> void:
 	_refresh_playability()
 
 func _add_card(card_data: Dictionary) -> void:
-	var card := PanelContainer.new()
-	card.set_script(CardScene)
+	var card = CardClass.new()
 	add_child(card)
 	card.setup(card_data)
 	card.card_clicked.connect(_on_card_clicked)
