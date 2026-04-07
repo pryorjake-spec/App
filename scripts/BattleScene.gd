@@ -37,11 +37,20 @@ func _build_layout() -> void:
 	anchor_right  = 1.0
 	anchor_bottom = 1.0
 
-	# Dark background
-	var bg := ColorRect.new()
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color(0.05, 0.05, 0.09)
-	add_child(bg)
+	# Background image (falls back to dark colour if file not found)
+	var bg_tex = load("res://assets/Background.png")
+	if bg_tex:
+		var bg := TextureRect.new()
+		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+		bg.texture = bg_tex
+		bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		bg.stretch_mode = TextureRect.STRETCH_SCALE
+		add_child(bg)
+	else:
+		var bg := ColorRect.new()
+		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+		bg.color = Color(0.05, 0.05, 0.09)
+		add_child(bg)
 
 	# Root VBoxContainer fills the whole window
 	var root := VBoxContainer.new()
