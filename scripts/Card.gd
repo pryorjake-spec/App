@@ -120,9 +120,8 @@ func _refresh_display() -> void:
 		"mystery": _type_bar.color = COL_MYSTERY
 		_:         _type_bar.color = COL_SKILL
 
-	# Try to load card image from assets/cards/{id}.png
-	var img_path := "res://assets/cards/%s.png" % card_data.get("id", "")
-	var tex = load(img_path)
+	# Load shared card art
+	var tex = load("res://Assets/cards.png")
 	if tex:
 		_card_image.texture = tex
 		_card_image.visible = true
