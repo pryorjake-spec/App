@@ -73,10 +73,20 @@ func get_cards_by_tier(tier: String) -> Array:
 	return _tiers.get(tier, [])
 
 func get_starter_deck() -> Array[Dictionary]:
-	## Returns a default starting deck (3 copies of each base card).
+	## Alien starter deck: 4x Alien Infantry, 4x Build, 1x Sappers, 1x Double Block
+	var composition := {
+		"alien_infantry": 4,
+		"build":          4,
+		"sappers":        1,
+		"double_block":   1,
+	}
 	var deck: Array[Dictionary] = []
-	for card in get_cards_by_tier("base"):
-		for i in range(3):
+	for id in composition:
+		var card := get_card(id)
+		if card.is_empty():
+			push_warning("CardDatabase: starter deck card '%s' not found" % id)
+			continue
+		for i in range(composition[id]):
 			deck.append(card.duplicate())
 	return deck
 

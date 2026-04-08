@@ -26,6 +26,10 @@ var enemy_defense:        int = 20
 var enemy_defense_max:    int = 20
 var enemy_infrastructure: int = 20
 
+# ---------- Buffs ----------
+var next_attack_double: bool = false   # Sappers: next attack deals 2x defense damage
+var next_defend_double: bool = false   # Double Block: next defend heals 2x defense
+
 # ---------- Turn State ----------
 var current_phase:      String = "player"   # "player" | "enemy"
 var turn_number:        int    = 1
@@ -48,18 +52,30 @@ var enemy_data: Dictionary = {}
 func apply_effect(effect: Dictionary, is_targeting_enemy: bool) -> void:
 	match effect["type"]:
 		"damage_defense":
-			_damage_defense(is_targeting_enemy, effect["amount"])
+			var amount: int = effect["amount"]
+			if next_attack_double:
+				amount *= 2
+				next_attack_double = false
+			_damage_defense(is_targeting_enemy, amount)
 		"damage_infrastructure":
 			_damage_infrastructure(is_targeting_enemy, effect["amount"])
 		"damage_hp":
 			_damage_hp(is_targeting_enemy, effect["amount"])
 		"heal_defense":
-			_heal_defense(not is_targeting_enemy, effect["amount"])
+			var amount: int = effect["amount"]
+			if next_defend_double:
+				amount *= 2
+				next_defend_double = false
+			_heal_defense(not is_targeting_enemy, amount)
 		"heal_infrastructure":
 			_heal_infrastructure(not is_targeting_enemy, effect["amount"])
 		"draw_cards":
-			# Handled by BattleScene — signal is enough
+			# Handled by TurnManager
 			pass
+		"buff_next_attack_double":
+			next_attack_double = true
+		"buff_next_defend_double":
+			next_defend_double = true
 	city_stats_changed.emit()
 	check_game_over()
 
@@ -215,6 +231,8 @@ func reset_player() -> void:
 	player_energy         = MAX_ENERGY
 	turn_number           = 1
 	is_game_over          = false
+	next_attack_double    = false
+	next_defend_double    = false
 	player_deck.clear()
 	player_hand.clear()
 	player_discard.clear()

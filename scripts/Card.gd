@@ -12,6 +12,7 @@ var _is_hovered: bool = false
 const COL_ATTACK  := Color(0.75, 0.18, 0.18)
 const COL_DEFEND  := Color(0.18, 0.42, 0.72)
 const COL_SKILL   := Color(0.45, 0.25, 0.70)
+const COL_MYSTERY := Color(0.70, 0.55, 0.10)   # gold for mystery cards
 const COL_BG      := Color(0.10, 0.10, 0.14, 0.97)
 const COL_HOVER   := Color(0.18, 0.18, 0.24, 0.97)
 const COL_DISABLED:= Color(0.06, 0.06, 0.08, 0.7)
@@ -21,6 +22,7 @@ var _name_label: Label
 var _cost_label: Label
 var _desc_label: Label
 var _type_bar:   ColorRect
+var _card_image: TextureRect
 
 func _ready() -> void:
 	mouse_entered.connect(_on_hover_enter)
@@ -86,10 +88,14 @@ func _build_ui() -> void:
 	_type_bar.custom_minimum_size = Vector2(0, 4)
 	vbox.add_child(_type_bar)
 
-	# Spacer
-	var spacer := Control.new()
-	spacer.custom_minimum_size = Vector2(0, 4)
-	vbox.add_child(spacer)
+	# Card image (shown if assets/cards/{id}.png exists)
+	_card_image = TextureRect.new()
+	_card_image.custom_minimum_size = Vector2(0, 60)
+	_card_image.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_card_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_card_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_card_image.visible = false
+	vbox.add_child(_card_image)
 
 	# Description
 	_desc_label = Label.new()
@@ -109,9 +115,19 @@ func _refresh_display() -> void:
 
 	var card_type: String = card_data.get("type", "skill")
 	match card_type:
-		"attack": _type_bar.color = COL_ATTACK
-		"defend": _type_bar.color = COL_DEFEND
-		_:        _type_bar.color = COL_SKILL
+		"attack":  _type_bar.color = COL_ATTACK
+		"defend":  _type_bar.color = COL_DEFEND
+		"mystery": _type_bar.color = COL_MYSTERY
+		_:         _type_bar.color = COL_SKILL
+
+	# Try to load card image from assets/cards/{id}.png
+	var img_path := "res://assets/cards/%s.png" % card_data.get("id", "")
+	var tex = load(img_path)
+	if tex:
+		_card_image.texture = tex
+		_card_image.visible = true
+	else:
+		_card_image.visible = false
 
 	if _is_playable:
 		_bg_style.bg_color = COL_HOVER if _is_hovered else COL_BG
