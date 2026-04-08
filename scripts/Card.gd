@@ -121,7 +121,6 @@ func _refresh_display() -> void:
 		_:         _type_bar.color = COL_SKILL
 
 	# Load card art based on card type
-	var card_type: String = card_data.get("type", "skill")
 	var img_path: String
 	match card_type:
 		"attack":  img_path = "res://Assets/attack.png"
