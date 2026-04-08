@@ -120,8 +120,16 @@ func _refresh_display() -> void:
 		"mystery": _type_bar.color = COL_MYSTERY
 		_:         _type_bar.color = COL_SKILL
 
-	# Load shared card art
-	var tex = load("res://Assets/cards.png")
+	# Load card art based on card type
+	var card_type: String = card_data.get("type", "skill")
+	var img_path: String
+	match card_type:
+		"attack":  img_path = "res://Assets/attack.png"
+		"defend":  img_path = "res://Assets/build.png"
+		"mystery": img_path = "res://Assets/mystery.png"
+		_:         img_path = "res://Assets/mystery.png"
+
+	var tex = load(img_path)
 	if tex:
 		_card_image.texture = tex
 		_card_image.visible = true
