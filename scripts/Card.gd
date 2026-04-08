@@ -1,28 +1,20 @@
 extends PanelContainer
 ## Card — a single playable card node displayed in the player's hand.
-## Emits `card_clicked(card_data)` when the player clicks it.
+## Uses card type image as background with text overlaid on top.
 
 signal card_clicked(card_data: Dictionary)
 
 var card_data: Dictionary = {}
 var _is_playable: bool = true
-var _is_hovered: bool = false
+var _is_hovered:  bool = false
 
-# Style colours
-const COL_ATTACK  := Color(0.75, 0.18, 0.18)
-const COL_DEFEND  := Color(0.18, 0.42, 0.72)
-const COL_SKILL   := Color(0.45, 0.25, 0.70)
-const COL_MYSTERY := Color(0.70, 0.55, 0.10)   # gold for mystery cards
-const COL_BG      := Color(0.10, 0.10, 0.14, 0.97)
-const COL_HOVER   := Color(0.18, 0.18, 0.24, 0.97)
-const COL_DISABLED:= Color(0.06, 0.06, 0.08, 0.7)
+const COL_DISABLED := Color(1.0, 1.0, 1.0, 0.4)
 
-var _bg_style:   StyleBoxFlat
-var _name_label: Label
-var _cost_label: Label
-var _desc_label: Label
-var _type_bar:   ColorRect
-var _card_image: TextureRect
+var _bg_texture:  TextureRect
+var _name_label:  Label
+var _cost_label:  Label
+var _desc_label:  Label
+var _type_bar:    ColorRect
 
 func _ready() -> void:
 	mouse_entered.connect(_on_hover_enter)
@@ -41,68 +33,73 @@ func set_playable(can_play: bool) -> void:
 func _build_ui() -> void:
 	custom_minimum_size = Vector2(120, 175)
 
-	_bg_style = StyleBoxFlat.new()
-	_bg_style.bg_color = COL_BG
-	_bg_style.border_width_left   = 2
-	_bg_style.border_width_right  = 2
-	_bg_style.border_width_top    = 2
-	_bg_style.border_width_bottom = 2
-	_bg_style.border_color = Color(0.3, 0.3, 0.45)
-	_bg_style.corner_radius_top_left     = 8
-	_bg_style.corner_radius_top_right    = 8
-	_bg_style.corner_radius_bottom_left  = 8
-	_bg_style.corner_radius_bottom_right = 8
-	add_theme_stylebox_override("panel", _bg_style)
+	# Transparent panel — image is the background
+	var blank := StyleBoxFlat.new()
+	blank.bg_color = Color(0, 0, 0, 0)
+	add_theme_stylebox_override("panel", blank)
+
+	# Background image (fills the whole card)
+	_bg_texture = TextureRect.new()
+	_bg_texture.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_bg_texture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_bg_texture.stretch_mode = TextureRect.STRETCH_SCALE
+	add_child(_bg_texture)
+
+	# Text overlay on top of the image
+	var margin := MarginContainer.new()
+	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	margin.add_theme_constant_override("margin_left",   8)
+	margin.add_theme_constant_override("margin_right",  8)
+	margin.add_theme_constant_override("margin_top",    8)
+	margin.add_theme_constant_override("margin_bottom", 8)
+	add_child(margin)
 
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 4)
-
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left",   6)
-	margin.add_theme_constant_override("margin_right",  6)
-	margin.add_theme_constant_override("margin_top",    6)
-	margin.add_theme_constant_override("margin_bottom", 6)
 	margin.add_child(vbox)
-	add_child(margin)
 
 	# Top row: name + cost
 	var top_row := HBoxContainer.new()
 	vbox.add_child(top_row)
 
 	_name_label = Label.new()
-	_name_label.add_theme_font_size_override("font_size", 12)
+	_name_label.add_theme_font_size_override("font_size", 11)
 	_name_label.add_theme_color_override("font_color", Color.WHITE)
+	_name_label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	_name_label.add_theme_constant_override("shadow_offset_x", 1)
+	_name_label.add_theme_constant_override("shadow_offset_y", 1)
 	_name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	top_row.add_child(_name_label)
 
 	_cost_label = Label.new()
 	_cost_label.add_theme_font_size_override("font_size", 14)
-	_cost_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.2))
+	_cost_label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.1))
+	_cost_label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	_cost_label.add_theme_constant_override("shadow_offset_x", 1)
+	_cost_label.add_theme_constant_override("shadow_offset_y", 1)
 	_cost_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_cost_label.custom_minimum_size = Vector2(22, 0)
 	top_row.add_child(_cost_label)
 
-	# Type colour bar
+	# Thin colour bar under the name (attack=red, defend=blue, mystery=gold)
 	_type_bar = ColorRect.new()
-	_type_bar.custom_minimum_size = Vector2(0, 4)
+	_type_bar.custom_minimum_size = Vector2(0, 3)
 	vbox.add_child(_type_bar)
 
-	# Card image (shown if assets/cards/{id}.png exists)
-	_card_image = TextureRect.new()
-	_card_image.custom_minimum_size = Vector2(0, 60)
-	_card_image.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_card_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_card_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_card_image.visible = false
-	vbox.add_child(_card_image)
+	# Spacer pushes description to the bottom
+	var spacer := Control.new()
+	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	vbox.add_child(spacer)
 
-	# Description
+	# Description at the bottom
 	_desc_label = Label.new()
-	_desc_label.add_theme_font_size_override("font_size", 10)
-	_desc_label.add_theme_color_override("font_color", Color(0.85, 0.85, 0.85))
+	_desc_label.add_theme_font_size_override("font_size", 9)
+	_desc_label.add_theme_color_override("font_color", Color.WHITE)
+	_desc_label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	_desc_label.add_theme_constant_override("shadow_offset_x", 1)
+	_desc_label.add_theme_constant_override("shadow_offset_y", 1)
 	_desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_desc_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	vbox.add_child(_desc_label)
 
 func _refresh_display() -> void:
@@ -115,12 +112,12 @@ func _refresh_display() -> void:
 
 	var card_type: String = card_data.get("type", "skill")
 	match card_type:
-		"attack":  _type_bar.color = COL_ATTACK
-		"defend":  _type_bar.color = COL_DEFEND
-		"mystery": _type_bar.color = COL_MYSTERY
-		_:         _type_bar.color = COL_SKILL
+		"attack":  _type_bar.color = Color(0.9, 0.2, 0.2)
+		"defend":  _type_bar.color = Color(0.2, 0.5, 0.95)
+		"mystery": _type_bar.color = Color(0.85, 0.7, 0.1)
+		_:         _type_bar.color = Color(0.5, 0.3, 0.8)
 
-	# Load card art based on card type
+	# Set background image based on card type
 	var img_path: String
 	match card_type:
 		"attack":  img_path = "res://Assets/attack.png"
@@ -130,25 +127,14 @@ func _refresh_display() -> void:
 
 	var tex = load(img_path)
 	if tex:
-		_card_image.texture = tex
-		_card_image.visible = true
-	else:
-		_card_image.visible = false
+		_bg_texture.texture = tex
 
-	if _is_playable:
-		_bg_style.bg_color = COL_HOVER if _is_hovered else COL_BG
-		_bg_style.border_color = Color(0.5, 0.5, 0.7) if _is_hovered else Color(0.3, 0.3, 0.45)
-		modulate = Color.WHITE
-	else:
-		_bg_style.bg_color = COL_DISABLED
-		modulate = Color(0.55, 0.55, 0.55, 0.8)
-
-	add_theme_stylebox_override("panel", _bg_style)
+	modulate = Color.WHITE if _is_playable else COL_DISABLED
 
 func _on_hover_enter() -> void:
 	_is_hovered = true
 	if _is_playable:
-		position.y -= 10  # lift card on hover
+		position.y -= 10
 	_refresh_display()
 
 func _on_hover_exit() -> void:
